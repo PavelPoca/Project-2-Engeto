@@ -45,48 +45,75 @@ def pocetBullsCows(cislo, tip):
 
     return bull_cow
 
+#funkce která požádá o vložení čísla od uživatele a rovnou číslo zkontroluje
+def user_input():
+    tip = input("Enter a number: ")
 
-cislo = generateCislo()
-pocet_tipu = 0
+    if not tip.isnumeric():
+        print(f"""
+Zadej číslo!
+{oddelovac}""")
+        return False
 
-print(f"""Hi there!
+    elif not noDuplicates(tip):
+        print(f"""
+Neměli by se opakovat čísla. Zkus znova.
+{oddelovac}""")
+        return False
+
+    elif int(tip) < 1000 or int(tip) > 9999:
+        print(f"""
+Číslo musí být čtyřmístné nebo nesmí začínat nulou. Zkus znova.
+{oddelovac}""")
+        return False    
+    else:
+        return int(tip)
+
+def say_hello():
+    print(f"""
+Hi there!
 {oddelovac}
 I've generated a random 4 digit number for you.
 Let's play a bulls and cows game.
 {oddelovac}""")
 
-while True:
-    tip = input("Enter a number: ")
+def num_of_tips(tips=int):
+    if tips == 1:
+        print(f"Číslo si uhádl v {tips} tipu, gratuluji!.")
+    else:
+        print(f"Číslo si uhádl ve {tips} tipech.")
 
-    if not tip.isnumeric():
-        print("Zadej číslo!")
+
+def main():
+    #pozdraví uživatele
+    say_hello()
+
+    #vygeneruje hádané číslo
+    cislo = generateCislo()
+    pocet_tipu = 0
+
+    #spouští se hlavní kostra hry
+    while True:
+        tip = user_input()
+        if tip == False:
+            continue
+        
+        bull_cow = pocetBullsCows(cislo, tip)
+
+        #vyhodnocuje zda se k číslu hodí bull nebo bulls apod.
+        bull = "bull" if bull_cow[0] == 1 else "bulls"
+        cow = "cow" if bull_cow[1] == 1 else "cows"
+
+        print(f"{bull_cow[0]} {bull}, {bull_cow[1]} {cow}")
         print(oddelovac)
-        continue
 
-    if not noDuplicates(tip):
-        print("Neměli by se opakovat čísla. Zkus znova.")
-        print(oddelovac)
-        continue
+        pocet_tipu += 1
 
-    if int(tip) < 1000 or int(tip) > 9999:
-        print("Číslo musí být čtyřmístné nebo nesmí začínat nulou. Zkus znova.")
-        print(oddelovac)
-        continue
-    
-    bull_cow = pocetBullsCows(cislo, tip)
+        #vyhodnotí hru
+        if bull_cow[0] == 4:
+            print("Uhádl si správně!")
+            num_of_tips(pocet_tipu)
+            break
 
-    bull = "bull" if bull_cow[0] == 1 else "bulls"
-    cow = "cow" if bull_cow[1] == 1 else "cows"
-
-    print(f"{bull_cow[0]} {bull}, {bull_cow[1]} {cow}")
-    print(oddelovac)
-
-    pocet_tipu += 1
-
-    if bull_cow[0] == 4:
-        print("Uhádl si správně!")
-        if pocet_tipu == 1:
-            print(f"Číslo si uhádl v {pocet_tipu} tipu, gratuluji!.")
-        else:
-            print(f"Číslo si uhádl ve {pocet_tipu} tipech.")
-        break
+if __name__ == "__main__":
+    main()
